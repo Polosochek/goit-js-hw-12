@@ -22,7 +22,7 @@ export default defineConfig(({ command }) => {
           },
           entryFileNames: chunkInfo => {
             if (chunkInfo.name === 'commonHelpers') {
-              return 'commonHelpers.js';
+              return 'commonHelpers.js' ;
             }
             return '[name].js';
           },
