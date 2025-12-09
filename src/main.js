@@ -24,7 +24,13 @@ function updateLoadMoreVisibility(totalHits) {
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const query = input.value.trim();
-  if (!query) return;
+  if (!query) {
+    iziToast.warning({
+      title: 'Ввдіть пошуковий запит',
+      timeout: 3000
+    });
+    return;
+  }
 
   hideLoadMoreButton();
 
@@ -35,11 +41,20 @@ form.addEventListener('submit', async (event) => {
   showLoader();
   try {
     const data = await getImagesByQuery(currentQuery, currentPage);
-    hideLoader();
 
     if (data && data.hits.length > 0) {
       createGallery(data.hits);
       updateLoadMoreVisibility(data.totalHits);
+
+      // If all results fit on a single page, inform the user
+      const totalPages = Math.ceil(data.totalHits / PER_PAGE);
+      if (totalPages <= 1) {
+        hideLoadMoreButton();
+        iziToast.info({
+          title: "You've reached the end of search results.",
+          timeout: 3000
+        });
+      }
     } else {
       iziToast.error({
         title: `Sorry, there are no images matching your search query. Please try again!`,
@@ -47,29 +62,35 @@ form.addEventListener('submit', async (event) => {
       });
     }
   } catch (error) {
-    hideLoader();
     iziToast.error({
       title: 'Не вдалось завантажити зображення',
       message: error.message,
       timeout: 4000
     });
+  } finally {
+    hideLoader();
   }
 });
 
 const loadMoreBtn = document.getElementById('load-more');
 
 loadMoreBtn.addEventListener('click', async () => {
+  // Prevent multiple clicks while fetching
+  hideLoadMoreButton();
+
   currentPage += 1;
   showLoader();
   try {
     const data = await getImagesByQuery(currentQuery, currentPage);
-    hideLoader();
 
     if (data && data.hits.length > 0) {
       createGallery(data.hits);
+
+      // Ensure scroll happens after DOM paint
       getBoundingClientRect();
+
       updateLoadMoreVisibility(data.totalHits);
-      
+
       const totalPages = Math.ceil(data.totalHits / PER_PAGE);
       if (currentPage >= totalPages) {
         hideLoadMoreButton();
@@ -86,11 +107,12 @@ loadMoreBtn.addEventListener('click', async () => {
       });
     }
   } catch (error) {
-    hideLoader();
     iziToast.error({
       title: 'Не вдалось завантажити зображення',
       message: error.message,
       timeout: 4000
     });
+  } finally {
+    hideLoader();
   }
 });

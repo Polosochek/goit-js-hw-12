@@ -66,12 +66,15 @@ export function hideLoadMoreButton() {
 
 
 export function getBoundingClientRect() {
-  const firstGalleryItem = document.querySelector('.gallery-item');
-  if (firstGalleryItem) {
-    const itemHeight = firstGalleryItem.getBoundingClientRect().height;
-    window.scrollBy({
-      top: itemHeight * 2,
-      behavior: 'smooth'
-    });
-  }
+  // Wait for the browser to paint new DOM nodes before measuring
+  requestAnimationFrame(() => {
+    const firstGalleryItem = document.querySelector('.gallery-item');
+    if (firstGalleryItem) {
+      const itemHeight = firstGalleryItem.getBoundingClientRect().height;
+      window.scrollBy({
+        top: itemHeight * 2,
+        behavior: 'smooth'
+      });
+    }
+  });
 }
