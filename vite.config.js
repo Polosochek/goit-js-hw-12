@@ -9,6 +9,7 @@ export default defineConfig(({ command }) => {
     define: {
       [command === 'serve' ? 'global' : '_global']: {},
     },
+    base: command === 'serve' ? '/' : '/goit-js-hw-12/',
     root: 'src',
     build: {
       sourcemap: true,
@@ -22,7 +23,7 @@ export default defineConfig(({ command }) => {
           },
           entryFileNames: chunkInfo => {
             if (chunkInfo.name === 'commonHelpers') {
-              return 'commonHelpers.js' ;
+              return 'commonHelpers.js';
             }
             return '[name].js';
           },
