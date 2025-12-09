@@ -26,7 +26,7 @@ form.addEventListener('submit', async (event) => {
   const query = input.value.trim();
   if (!query) {
     iziToast.warning({
-      title: 'Ввдіть пошуковий запит',
+      title: 'Ввдіть пошуковий запит!',
       timeout: 3000
     });
     return;
